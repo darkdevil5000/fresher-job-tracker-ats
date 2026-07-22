@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application CRM Tracker | IT-JobScrape</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">IT-Job<span>Scrape</span></a>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <a href="/" class="btn-secondary" style="border-radius: 30px;">🏠 Dashboard</a>
+                <a href="/tracker" class="nav-btn">📊 Tracker Board</a>
+                <a href="/logout" style="color: var(--text-secondary); font-size: 0.9rem; text-decoration: none;">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" style="max-width: 1300px;">
+        
+        <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 2.2rem; font-weight: 800;">Application CRM Tracker</h1>
+                <p style="color: var(--text-secondary); margin-top: 5px;">Manage your job search pipeline. Track your application states from Saved to Selected/Rejected.</p>
+            </div>
+            <span style="color: var(--accent); font-weight: 600; font-size: 0.95rem;">Logged in as: <strong th:text="${currentUser.username}" style="color: white;"></strong></span>
+        </div>
+
+        <!-- Kanban Tracker Board -->
+        <div class="tracker-board">
+            
+            <!-- SAVED COLUMN -->
+            <div class="tracker-column col-saved">
+                <div class="tracker-column-header">
+                    <span>Saved Roles</span>
+                    <span class="column-count" th:text="${jobs.stream().filter(j -> j.applicationStatus == 'SAVED').count()}">0</span>
+                </div>
+                
+                <div class="tracker-card" th:each="job : ${jobs}" th:if="${job.applicationStatus == 'SAVED'}">
+                    <div class="tracker-card-title" th:text="${job.title}">Trainee</div>
+                    <div class="tracker-card-company" th:text="${job.company}">TCS</div>
+                    <div class="tracker-card-meta">
+                        📍 <span th:text="${job.location}">Pune</span><br>
+                        💰 <span th:text="${job.salary}">3.6 LPA</span>
+                    </div>
+                    
+                    <form th:action="@{/job/{id}/status(id=${job.id})}" method="post" class="status-form">
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="SAVED" selected>Saved</option>
+                            <option value="APPLIED">Applied</option>
+                            <option value="RESUME_VIEWED">Resume Viewed</option>
+                            <option value="SELECTED">Selected</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                    </form>
+                    <div style="margin-top: 10px; display: flex; gap: 8px;">
+                        <a th:href="@{/job/{id}(id=${job.id})}" style="font-size: 0.72rem; color: var(--accent); text-decoration: none; font-weight: 600;">Details</a>
+                        <a th:href="@{/resume/build/{jobId}(jobId=${job.id})}" style="font-size: 0.72rem; color: var(--success); text-decoration: none; font-weight: 600;">Resume</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPLIED COLUMN -->
+            <div class="tracker-column col-applied">
+                <div class="tracker-column-header">
+                    <span>Applied</span>
+                    <span class="column-count" th:text="${jobs.stream().filter(j -> j.applicationStatus == 'APPLIED').count()}">0</span>
+                </div>
+                
+                <div class="tracker-card" th:each="job : ${jobs}" th:if="${job.applicationStatus == 'APPLIED'}">
+                    <div class="tracker-card-title" th:text="${job.title}">Trainee</div>
+                    <div class="tracker-card-company" th:text="${job.company}">TCS</div>
+                    <div class="tracker-card-meta">
+                        📍 <span th:text="${job.location}">Pune</span><br>
+                        💰 <span th:text="${job.salary}">3.6 LPA</span>
+                    </div>
+                    
+                    <form th:action="@{/job/{id}/status(id=${job.id})}" method="post" class="status-form">
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="SAVED">Saved</option>
+                            <option value="APPLIED" selected>Applied</option>
+                            <option value="RESUME_VIEWED">Resume Viewed</option>
+                            <option value="SELECTED">Selected</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                    </form>
+                    <div style="margin-top: 10px; display: flex; gap: 8px;">
+                        <a th:href="@{/job/{id}(id=${job.id})}" style="font-size: 0.72rem; color: var(--accent); text-decoration: none; font-weight: 600;">Details</a>
+                        <a th:href="@{/resume/build/{jobId}(jobId=${job.id})}" style="font-size: 0.72rem; color: var(--success); text-decoration: none; font-weight: 600;">Resume</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUME VIEWED COLUMN -->
+            <div class="tracker-column col-interviewing">
+                <div class="tracker-column-header">
+                    <span>Resume Viewed</span>
+                    <span class="column-count" th:text="${jobs.stream().filter(j -> j.applicationStatus == 'RESUME_VIEWED').count()}">0</span>
+                </div>
+                
+                <div class="tracker-card" th:each="job : ${jobs}" th:if="${job.applicationStatus == 'RESUME_VIEWED'}">
+                    <div class="tracker-card-title" th:text="${job.title}">Trainee</div>
+                    <div class="tracker-card-company" th:text="${job.company}">TCS</div>
+                    <div class="tracker-card-meta">
+                        📍 <span th:text="${job.location}">Pune</span><br>
+                        💰 <span th:text="${job.salary}">3.6 LPA</span>
+                    </div>
+                    
+                    <form th:action="@{/job/{id}/status(id=${job.id})}" method="post" class="status-form">
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="SAVED">Saved</option>
+                            <option value="APPLIED">Applied</option>
+                            <option value="RESUME_VIEWED" selected>Resume Viewed</option>
+                            <option value="SELECTED">Selected</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                    </form>
+                    <div style="margin-top: 10px; display: flex; gap: 8px;">
+                        <a th:href="@{/job/{id}(id=${job.id})}" style="font-size: 0.72rem; color: var(--accent); text-decoration: none; font-weight: 600;">Details</a>
+                        <a th:href="@{/resume/build/{jobId}(jobId=${job.id})}" style="font-size: 0.72rem; color: var(--success); text-decoration: none; font-weight: 600;">Resume</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SELECTED / REJECTED COLUMN -->
+            <div class="tracker-column col-offer">
+                <div class="tracker-column-header">
+                    <span>Selected / Rejected</span>
+                    <span class="column-count" th:text="${jobs.stream().filter(j -> j.applicationStatus == 'SELECTED' || j.applicationStatus == 'REJECTED').count()}">0</span>
+                </div>
+                
+                <div class="tracker-card" th:each="job : ${jobs}" th:if="${job.applicationStatus == 'SELECTED' || job.applicationStatus == 'REJECTED'}">
+                    <div class="tracker-card-title" th:text="${job.title}">Trainee</div>
+                    <div class="tracker-card-company" th:text="${job.company}">TCS</div>
+                    <div class="tracker-card-meta">
+                        📍 <span th:text="${job.location}">Pune</span><br>
+                        💰 <span th:text="${job.salary}">3.6 LPA</span>
+                        <div style="margin-top: 5px;">
+                            <span th:if="${job.applicationStatus == 'SELECTED'}" style="background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16,185,129,0.3); padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">★ Selected</span>
+                            <span th:if="${job.applicationStatus == 'REJECTED'}" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">✖ Rejected</span>
+                        </div>
+                    </div>
+                    
+                    <form th:action="@{/job/{id}/status(id=${job.id})}" method="post" class="status-form">
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="SAVED">Saved</option>
+                            <option value="APPLIED">Applied</option>
+                            <option value="RESUME_VIEWED">Resume Viewed</option>
+                            <option value="SELECTED" th:selected="${job.applicationStatus == 'SELECTED'}">Selected</option>
+                            <option value="REJECTED" th:selected="${job.applicationStatus == 'REJECTED'}">Rejected</option>
+                        </select>
+                    </form>
+                    <div style="margin-top: 10px; display: flex; gap: 8px;">
+                        <a th:href="@{/job/{id}(id=${job.id})}" style="font-size: 0.72rem; color: var(--accent); text-decoration: none; font-weight: 600;">Details</a>
+                        <a th:href="@{/resume/build/{jobId}(jobId=${job.id})}" style="font-size: 0.72rem; color: var(--success); text-decoration: none; font-weight: 600;">Resume</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 IT-JobScrape. Built entirely in Java & Spring Boot.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: job-tracker-ats-portal
+    env: docker
+    plan: free
+    region: singapore # Standard region for India proximity
+    branch: main
+    numInstances: 1
+    healthCheckPath: /login
+    envVars:
+      - key: PORT
+        value: 8080
+      # You can configure SMTP details here for real email alerts
+      # - key: SPRING_MAIL_HOST
+      #   value: smtp.gmail.com
+      # - key: SPRING_MAIL_PORT
+      #   value: 587
+      # - key: SPRING_MAIL_USERNAME
+      #   value: your-email@gmail.com
+      # - key: SPRING_MAIL_PASSWORD
+      #   value: your-app-password
+    disk:
+      name: jobdb-data
+      mountPath: /app/data
+      sizeGB: 1 # Standard persistent H2 db storage limit

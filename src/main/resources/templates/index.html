@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freshers IT Job Portal & ATS Resume Builder</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">IT-Job<span>Scrape</span></a>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <span th:if="${currentUser}" style="font-size: 0.88rem; color: var(--text-secondary);">Welcome, <strong th:text="${currentUser.username}" style="color: white;"></strong></span>
+                <a href="/tracker" class="btn-secondary" style="border-radius: 30px;">📊 Tracker Board</a>
+                <a href="/sync" class="nav-btn">🔄 Sync Jobs Now</a>
+                <a th:if="${currentUser}" href="/logout" style="color: var(--text-secondary); font-size: 0.9rem; text-decoration: none; margin-left: 5px;">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="container">
+        
+        <!-- Hero section & Search Panel -->
+        <section class="hero-section">
+            <h1>Freshers BCA / MCA IT Job Finder</h1>
+            <p>Everyday automated crawls for junior engineering roles, assistant developers, and tech trainees across India. Select a job below to build an ATS-friendly LaTeX resume.</p>
+            
+            <form action="/" method="get">
+                <div class="search-bar-container">
+                    <input type="text" name="search" th:value="${search}" placeholder="Search jobs (e.g. Java, Web Developer, Pune...)" class="search-input">
+                    <button type="submit" class="nav-btn">Search</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Notification Message -->
+        <div th:if="${message}" class="alert" th:text="${message}"></div>
+
+        <!-- Job Section Meta Info -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Active Job Listings (<span th:text="${jobCount}">0</span>)</h2>
+            <span th:if="${search}" style="color: var(--text-secondary);">Showing results for "<strong th:text="${search}" style="color: var(--accent);"></strong>"</span>
+        </div>
+
+        <!-- Job Grid -->
+        <div class="job-grid">
+            <!-- Iterate over scraped jobs -->
+            <div class="job-card" th:each="job : ${jobs}">
+                <div class="job-header">
+                    <span class="job-tag" th:text="${job.source}">LinkedIn</span>
+                    <h3 class="job-title" th:text="${job.title}">Associate Software Engineer</h3>
+                    <p class="job-company" th:text="${job.company}">Cognizant</p>
+                </div>
+                
+                <div class="job-details-row">
+                    <div class="job-detail-item">
+                        <!-- Location Icon -->
+                        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                        <span th:text="${job.location}">Bengaluru, India</span>
+                    </div>
+                    <div class="job-detail-item">
+                        <!-- Money Icon -->
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+                        <span th:text="${job.salary}">3.6 - 5.0 LPA</span>
+                    </div>
+                </div>
+
+                <div class="job-actions">
+                    <a th:href="@{/job/{id}(id=${job.id})}" class="btn-secondary">View Details</a>
+                    <a th:href="@{/resume/build/{jobId}(jobId=${job.id})}" class="btn-primary">Generate Resume</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${jobCount == 0}" style="text-align: center; padding: 4rem 2rem; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border-color); margin-top: 2rem;">
+            <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 1.5rem;">No jobs found matching your criteria.</p>
+            <a href="/" class="nav-btn">Clear Search Filter</a>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 IT-JobScrape. Built entirely in Java & Spring Boot.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Resume Builder</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">IT-Job<span>Scrape</span></a>
+            <a href="/" class="btn-secondary" style="border-radius:30px;">Back to Jobs</a>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <a th:href="@{/job/{id}(id=${job.id})}" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Job Details
+        </a>
+
+        <div class="card">
+            <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h1 style="font-size: 2rem; font-weight: 800;">ATS Resume Optimization Portal</h1>
+                <p style="color: var(--text-secondary); margin-top: 5px;">
+                    Tailoring resume for: <strong style="color: var(--accent);" th:text="${job.title}">Associate Engineer</strong> at <strong style="color: var(--text-primary);" th:text="${job.company}">Wipro</strong>
+                </p>
+            </div>
+
+            <form action="/resume/generate" method="post">
+                <input type="hidden" name="jobId" th:value="${job.id}">
+                
+                <div class="form-grid">
+                    <!-- Personal Info -->
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" th:value="${portfolio.name}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" th:value="${portfolio.email}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="text" id="phone" name="phone" th:value="${portfolio.phone}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="github">GitHub Profile URL (Optional)</label>
+                        <input type="text" id="github" name="github" th:value="${portfolio.github}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn Profile URL (Optional)</label>
+                        <input type="text" id="linkedin" name="linkedin" th:value="${portfolio.linkedin}">
+                    </div>
+
+                    <!-- Skills (Comma separated) -->
+                    <div class="form-group">
+                        <label for="skills">Key Skills (Comma Separated)</label>
+                        <input type="text" id="skills" name="skills" th:value="${portfolio.skills}" required>
+                    </div>
+
+                    <!-- Professional Summary -->
+                    <div class="form-group full-width">
+                        <label for="summary">Professional Summary</label>
+                        <textarea id="summary" name="summary" rows="3" th:text="${portfolio.summary}" required></textarea>
+                    </div>
+
+                    <!-- Education -->
+                    <div class="form-group full-width">
+                        <label for="education">Education (One degree per line)</label>
+                        <textarea id="education" name="education" rows="3" th:text="${portfolio.education}" required></textarea>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="form-group full-width">
+                        <label for="experience">Work Experience / Internships (One position per line)</label>
+                        <textarea id="experience" name="experience" rows="3" th:text="${portfolio.experience}"></textarea>
+                    </div>
+
+                    <!-- Projects -->
+                    <div class="form-group full-width">
+                        <label for="projects">Academic Projects (One project per line)</label>
+                        <textarea id="projects" name="projects" rows="4" th:text="${portfolio.projects}" required></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn-primary" style="padding: 0.9rem 2.5rem; font-size: 1rem; border-radius: 8px;">
+                        ✨ Optimize & Generate LaTeX Code
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 IT-JobScrape. Built entirely in Java & Spring Boot.</p>
+    </footer>
+
+</body>
+</html>
