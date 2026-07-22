@@ -4,7 +4,7 @@ services:
     env: docker
     plan: free
     region: singapore # Standard region for India proximity
-    branch: main
+    branch: master
     numInstances: 1
     healthCheckPath: /login
     envVars:
