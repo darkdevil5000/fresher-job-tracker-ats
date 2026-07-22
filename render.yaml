@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: job-tracker-ats-portal
+    name: fresher-job-tracker-ats-darkdevil5000
     env: docker
     plan: free
     region: singapore # Standard region for India proximity
