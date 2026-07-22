@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview Preparation Hub | IT-JobScrape</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        .accordion-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .accordion-item:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .accordion-header {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .accordion-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+            background: rgba(6, 182, 212, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+        .accordion-body {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+        .accordion-item.active .accordion-body {
+            padding: 1.2rem 1.5rem;
+            max-height: 500px;
+            border-top: 1px solid var(--border-color);
+        }
+        .chevron {
+            transition: transform 0.3s ease;
+        }
+        .accordion-item.active .chevron {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="nav-container">
+            <a href="/" class="logo">IT-Job<span>Scrape</span></a>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <a href="/" class="btn-secondary" style="border-radius: 30px;">🏠 Dashboard</a>
+                <a href="/tracker" class="nav-btn">📊 Tracker Board</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+            <a th:href="@{/job/{id}(id=${job.id})}" class="back-link" style="margin-bottom: 0.5rem;">
+                ← Back to Job Details
+            </a>
+            <h1 style="font-size: 2.2rem; font-weight: 800;">Interview Preparation Hub</h1>
+            <p style="color: var(--text-secondary); margin-top: 5px;">
+                Tailored interview preparation for <strong th:text="${job.title}" style="color: white;"></strong> at <strong th:text="${job.company}" style="color: var(--accent);"></strong>.
+            </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+            
+            <!-- Accordion List -->
+            <div>
+                <h2 style="font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--text-primary);">Curated Interview Questions</h2>
+                
+                <div class="accordion-item" th:each="qa, iter : ${questions}">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div>
+                            <span class="accordion-category" th:text="${qa.category}">Core Java</span>
+                            <div th:text="${iter.count + '. ' + qa.question}">What is polymorphism?</div>
+                        </div>
+                        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-secondary);"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
+                    <div class="accordion-body">
+                        <p th:text="${qa.answer}">Polymorphism is...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Side Card with advice -->
+            <div class="card" style="padding: 1.5rem;">
+                <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; color: var(--accent);">Prep Strategies</h3>
+                <ul style="color: var(--text-secondary); font-size: 0.9rem; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 12px;">
+                    <li><strong>Review the basics:</strong> Junior developer interviews heavily emphasize JVM structure, OOP theory, and SQL queries.</li>
+                    <li><strong>Be ready for coding:</strong> Be prepared to write simple programs (like reverse string or array checks) using a clean IDE.</li>
+                    <li><strong>Ask questions:</strong> End the interview by asking details about their technical stack, container pipelines, or developer tooling.</li>
+                </ul>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 IT-JobScrape. Built entirely in Java & Spring Boot.</p>
+    </footer>
+
+    <script>
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
