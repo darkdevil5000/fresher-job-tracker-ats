@@ -19,7 +19,3 @@ services:
       #   value: your-email@gmail.com
       # - key: SPRING_MAIL_PASSWORD
       #   value: your-app-password
-    disk:
-      name: jobdb-data
-      mountPath: /app/data
-      sizeGB: 1 # Standard persistent H2 db storage limit
