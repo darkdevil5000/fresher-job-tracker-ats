@@ -24,8 +24,11 @@ RUN ./gradlew bootJar -x test --no-daemon
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copy built jar from builder stage
-COPY --from=build /app/build/libs/*.jar app.jar
+# Create writeable data directory for H2 database
+RUN mkdir -p /app/data && chmod 777 /app/data
+
+# Copy built executable jar specifically (avoiding plain jar conflict)
+COPY --from=build /app/build/libs/demo-0.0.1-SNAPSHOT.jar app.jar
 
 # Expose server port
 EXPOSE 8080
