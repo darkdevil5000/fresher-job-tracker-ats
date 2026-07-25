@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 
 @Service
 public class JobScraperService {
@@ -29,6 +31,20 @@ public class JobScraperService {
     private EmailAlertService emailAlertService;
 
     private static final String RSS_URL = "https://news.google.com/rss/search?q=fresher+IT+jobs+(BCA+OR+MCA)+AND+(site:lever.co+OR+site:greenhouse.io+OR+site:myworkdayjobs.com+OR+site:accenture.com+OR+site:cognizant.com+OR+site:wipro.com+OR+site:infosys.com+OR+site:tcs.com+OR+site:capgemini.com)+AND+(Bangalore+OR+Pune+OR+Mumbai+OR+Chennai+OR+Hyderabad)&hl=en-IN&gl=IN&ceid=IN:en";
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void initDatabaseOnStartup() {
+        try {
+            if (jobRepository.count() == 0) {
+                System.out.println("H2 Database is empty. Pre-populating with fallback jobs on startup...");
+                List<Job> fallback = getFallbackJobs();
+                jobRepository.saveAll(fallback);
+                System.out.println("H2 Database successfully pre-populated with " + fallback.size() + " fallback jobs.");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to pre-populate database on startup: " + e.getMessage());
+        }
+    }
 
     // Runs every day at 9 AM
     @Scheduled(cron = "0 0 9 * * *")

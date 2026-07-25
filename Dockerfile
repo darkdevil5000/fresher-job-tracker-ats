@@ -33,5 +33,5 @@ COPY --from=build /app/build/libs/demo-0.0.1-SNAPSHOT.jar app.jar
 # Expose server port
 EXPOSE 8080
 
-# Run JVM server
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run JVM server with memory optimization constraints for 512MB RAM environments
+ENTRYPOINT ["java", "-XX:+UseSerialGC", "-Xss256k", "-Xms128m", "-Xmx256m", "-jar", "app.jar"]
