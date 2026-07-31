@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -311,6 +312,50 @@ public class JobScraperService {
     }
 
     private String resolveDirectUrl(String googleNewsUrl) {
+        if (googleNewsUrl == null) return "";
+        try {
+            // Check if it's a Google News article URL
+            if (googleNewsUrl.contains("/articles/") || googleNewsUrl.contains("/rss/articles/")) {
+                String[] parts = googleNewsUrl.split("/articles/");
+                if (parts.length < 2) {
+                    parts = googleNewsUrl.split("/rss/articles/");
+                }
+                if (parts.length >= 2) {
+                    String encoded = parts[1];
+                    // Strip query parameters
+                    if (encoded.contains("?")) {
+                        encoded = encoded.substring(0, encoded.indexOf("?"));
+                    }
+                    
+                    // Add base64 padding if needed
+                    while (encoded.length() % 4 != 0) {
+                        encoded += "=";
+                    }
+                    
+                    byte[] decodedBytes = Base64.getDecoder().decode(encoded);
+                    String decoded = new String(decodedBytes, "UTF-8");
+                    
+                    int httpIdx = decoded.indexOf("http");
+                    if (httpIdx != -1) {
+                        String realUrl = decoded.substring(httpIdx);
+                        // Clean up binary tail chars
+                        int cleanEnd = realUrl.length();
+                        for (int i = 0; i < realUrl.length(); i++) {
+                            char c = realUrl.charAt(i);
+                            if (c < 32 || c > 126) {
+                                cleanEnd = i;
+                                break;
+                            }
+                        }
+                        return realUrl.substring(0, cleanEnd);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Base64 decode failed for: " + googleNewsUrl + ". Using HTTP client resolution: " + e.getMessage());
+        }
+
+        // Fallback to HTTP client redirect resolution
         try {
             return Jsoup.connect(googleNewsUrl)
                     .userAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
